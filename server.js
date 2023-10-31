@@ -4,10 +4,18 @@ const path = require("path");
 const PORT = process.env.PORT || 3500;
 const {logger} = require("./middleware/logger")
 const errorHandler = require("./middleware/errorHandler");
+const cookieParser = require('cookie-parser')
+const cors = require('cors');
+const corsOptions = require('./config/corsOptions');
+
+
 app.use(logger)
 
 //allow our app to recieve and parse the json data, this is also built in middleware
 app.use(express.json())
+
+app.use(cookieParser()) //ability to parse cookies
+app.use(cors(corsOptions)) //ability to use options requests, and allows anyone in public can have access to this 
 
 
 //telling express where to find the static files below, this below is a built in middleware
