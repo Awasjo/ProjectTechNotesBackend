@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3500;
 const {logger} = require("./middleware/logger")
-
+const errorHandler = require("./middleware/errorHandler");
 app.use(logger)
 
 //allow our app to recieve and parse the json data, this is also built in middleware
@@ -26,5 +26,7 @@ app.all("*", (req, res) => {
     res.type("txt").send("404 Not Found");
   }
 });
+
+app.use(errorHandler)
 //listens to the 3500 port
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
