@@ -2,9 +2,17 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3500;
+const {logger} = require("./middleware/logger")
 
-//telling express where to find the static files below
+app.use(logger)
+
+//allow our app to recieve and parse the json data, this is also built in middleware
+app.use(express.json())
+
+
+//telling express where to find the static files below, this below is a built in middleware
 app.use("/", express.static(path.join(__dirname, "public")));
+//
 app.use("/", require("./routes/root"));
 
 //for all requests that doesn't exist
