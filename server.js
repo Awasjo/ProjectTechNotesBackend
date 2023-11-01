@@ -31,7 +31,8 @@ app.use(cors(corsOptions)) //ability to use options requests, and allows anyone 
 app.use("/", express.static(path.join(__dirname, "public")));
 //
 app.use("/", require("./routes/root"));
-app.use('users', require('./routes/userRoutes'))
+app.use("/users", require("./routes/userRoutes"))
+app.use("/notes", require("./routes/noteRoutes"))
 
 //for all requests that doesn't exist
 app.all("*", (req, res) => {
