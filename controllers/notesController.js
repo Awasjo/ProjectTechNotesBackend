@@ -31,10 +31,10 @@ const createNewNote = asyncHandler(async (req, res) => {
   }
 
   // Create and store the new user
-  const noteObject = { user, title, text }
-//   console.log(noteObject)
+  const noteObject = { user, title, text };
+  //   console.log(noteObject)
   const note = await Note.create(noteObject);
-//   console.log("passed create data")
+  //   console.log("passed create data")
 
   if (note) {
     // Created
@@ -47,22 +47,24 @@ const createNewNote = asyncHandler(async (req, res) => {
 // @route PATCH /notes
 // @access Private
 const updateNote = asyncHandler(async (req, res) => {
-  const { id, user, title, text, completed, timestamp } = req.body;
+  const { id, user, title, text, completed } = req.body;
 
   //confirm data
   if (!id || !user || !title || !text || typeof completed !== "boolean") {
     return res.status(400).json({ message: "All field are required" });
   }
 
-  const note = await Note.findOne(id).exec();
+  const note = await Note.findById(id).exec();
 
   if (!note) {
     return res.status(400).json({ message: "note not found" });
   }
 
   //check for duplicates
-  const duplicate = await note.findOne({ title }).lean().exec();
-  if (duplicate && duplicate?._id.toString() == id) {
+  const duplicate = await Note.findOne({ title }).lean().exec();
+
+  // Allow renaming of the original note
+  if (duplicate && duplicate?._id.toString() !== id) {
     return res.status(409).json({ message: "Duplicate note title" });
   }
 

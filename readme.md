@@ -1,0 +1,1 @@
+mongoose deprecated version so that the counter works as expected 
