@@ -1,18 +1,30 @@
 const User = require("../models/User");
 const Note = require("../models/Note");
-const asyncHandler = require("express-async-handler"); //keep us from uysing try catch blocks
+const asyncHandler = require("express-async-handler"); //keep us from using try catch blocks
 
 // @desc Get all notes
 // @route GET /notes
 // @access Private
 const getAllNotes = asyncHandler(async (req, res) => {
-  const notes = await Note.find().lean().populate("user", "username");
+  // Get all notes from MongoDB
+  const notes = await Note.find().lean()
+
+  // If no notes 
   if (!notes?.length) {
-    return res.status(400).json({ message: "No notes found" });
+      return res.status(400).json({ message: 'No notes found' })
   }
 
-  res.json(notes);
-});
+  // Add username to each note before sending the response 
+  // See Promise.all with map() here: https://youtu.be/4lqJBBEpjRE 
+  // You could also do this with a for...of loop
+  const notesWithUser = await Promise.all(notes.map(async (note) => {
+      const user = await User.findById(note.user).lean().exec()
+      return { ...note, username: user.username }
+  }))
+
+  res.json(notesWithUser)
+})
+
 // @desc Create new note
 // @route POST /notes
 // @access Private
