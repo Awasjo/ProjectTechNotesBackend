@@ -12,6 +12,6 @@ const errorHandler = (err, req, res, next) => {
 
   res.status(status);
 
-  res.json({ message: err.message });
+  res.json({ message: err.message, isError: true}); //since we are using rtx redux, setting isError to true is useful information from the backend to the front end devs
 };
 module.exports = errorHandler;

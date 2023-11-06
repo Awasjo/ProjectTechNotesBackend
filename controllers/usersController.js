@@ -19,11 +19,11 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const createNewUser = asyncHandler(async (req, res) => {
   const { username, password, roles } = req.body;
   //confirm the data
-  if (!username || !password || !Array.isArray(roles) || !roles.length) {
+  if (!username || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
   //check for duplicates
-  const duplicate = await User.findOne({ username }).lean().exec(); //if we use async await we need to call exec at the end
+  const duplicate = await User.findOne({ username }).collation({ locale: 'en', strength: 2 }).lean().exec(); //if we use async await we need to call exec at the end, collation checks for case insensitivity, so cases doesn't matter 
 
   if (duplicate) {
     return res.status(409).json({ message: "Duplicate username" });
@@ -32,7 +32,9 @@ const createNewUser = asyncHandler(async (req, res) => {
   //hash the password
   const hashedPassword = await bcrypt.hash(password, 10); //salt rounds is set at 10 here
 
-  const userObject = { username, password: hashedPassword, roles };
+  const userObject = (!Array.isArray(roles) || !roles.length) //this change is related tot he above change, if we have the roles, we populate it and if we don't then its all, since by default everyone gets employee 
+  ? { username, "password": hashedPwd }
+  : { username, "password": hashedPwd, roles }
 
   //create and store new user
   const user = await User.create(userObject);
@@ -70,7 +72,7 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 
   //check for duplicates
-  const duplicate = await User.findOne({ username }).lean().exec();
+  const duplicate = await User.findOne({ username }).collation({ locale: 'en', strength: 2 }).lean().exec();
   //allow updated to the original user
   if (duplicate && duplicate?._id.toString() !== id) {
     return res.status(409).json({ message: "duplicate username" });
