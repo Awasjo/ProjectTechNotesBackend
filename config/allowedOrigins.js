@@ -1,7 +1,5 @@
 const allowedOrigins = [
-    'http://localhost:3000',
-    'https://www.stakeholder....com',
-    'https://stakeholder....com'
+    'https://technotes-mkw3.onrender.com',
 
 ]
 
