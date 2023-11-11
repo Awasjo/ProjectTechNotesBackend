@@ -33,8 +33,8 @@ const createNewUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10); //salt rounds is set at 10 here
 
   const userObject = (!Array.isArray(roles) || !roles.length) //this change is related tot he above change, if we have the roles, we populate it and if we don't then its all, since by default everyone gets employee 
-  ? { username, "password": hashedPwd }
-  : { username, "password": hashedPwd, roles }
+  ? { username, "password": hashedPassword }
+  : { username, "password": hashedPassword, roles }
 
   //create and store new user
   const user = await User.create(userObject);
